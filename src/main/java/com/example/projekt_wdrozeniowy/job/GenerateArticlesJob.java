@@ -1,33 +1,35 @@
-package com.example.projekt_wdrozeniowy.controller;
+package com.example.projekt_wdrozeniowy.job;
 
 import com.example.projekt_wdrozeniowy.model.Article;
 import com.example.projekt_wdrozeniowy.service.ArticleService;
 import lombok.extern.slf4j.Slf4j;
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.scheduling.annotation.Async;
 import org.springframework.scheduling.annotation.Scheduled;
 import org.springframework.stereotype.Controller;
 
 @Controller
 @Slf4j
-public class ArticleWriter {
+public class GenerateArticlesJob implements Runnable {
 
-    @Autowired
-    ArticleService articleService;
+    private final ArticleService articleService;
 
+    @Override
     @Scheduled(cron = "*/2 * * * * *")
-    //@Scheduled(fixedRate = 1000)
     @Async
-    public void run2() {
+    public void run() {
+        log.info("Starting job: " + this.getClass().getSimpleName());
         int counter = (int) (Math.random() * 3);
+        int numberOfCreatedArticles = 0;
         for (int i = 0; i < counter; i++) {
             if (Math.random() * 100 > 50) {
-                articleService.save(new Article(Gibberish(), Gibberish(), Gibberish()));
+                numberOfCreatedArticles++;
+                articleService.save(new Article(generateGibberish(), generateGibberish(), generateGibberish()));
             }
         }
+        log.info("Generated " + numberOfCreatedArticles + " new Articles.");
     }
 
-    private String Gibberish() {
+    private String generateGibberish() {
         StringBuilder stringBuilder = new StringBuilder();
         int length = 3 + (int) (Math.random() * 32);
 
@@ -36,5 +38,9 @@ public class ArticleWriter {
             stringBuilder.append(temp);
         }
         return stringBuilder.toString();
+    }
+
+    public GenerateArticlesJob(ArticleService articleService) {
+        this.articleService = articleService;
     }
 }

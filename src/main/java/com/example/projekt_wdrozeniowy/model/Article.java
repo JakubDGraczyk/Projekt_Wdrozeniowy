@@ -24,11 +24,13 @@ public class Article implements Comparable<Article> {
     private String title;
     private String content;
     private String author;
+    private boolean exported;
 
     Article() {
         this.id = UUID.randomUUID();
         this.date = LocalDateTime.now();
         this.date = this.date.withNano(0);
+        this.exported = false;
     }
 
     public Article(String title, String content, String author) {

@@ -2,34 +2,42 @@ package com.example.projekt_wdrozeniowy.service;
 
 import com.example.projekt_wdrozeniowy.model.Article;
 import com.example.projekt_wdrozeniowy.repository.ArticleRepository;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
-import org.springframework.beans.factory.annotation.Autowired;
+import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Service;
 
 import java.util.List;
+import java.util.UUID;
 
 @Service
+@Slf4j
 public class ArticleService {
-    @Autowired
-    ArticleRepository articleRepository;
-    @Autowired
-    FileService fileService;
+    private final ArticleRepository articleRepository;
 
     public List<Article> findLatestArticles() {
-        Logger logger = LoggerFactory.getLogger(FileService.class);
-        List<Article> articleList = articleRepository.findLatestArticles(fileService.loadLatestTimeStamp());
+        List<Article> articleList = articleRepository.findArticlesToExport();
         if (articleList.isEmpty()) {
-            logger.info("No records were found, that suit this criteria.");
+            log.info("No records were found, that suit this criteria.");
         } else {
-            logger.info(articleList.size() + " records were found.");
+            log.info(articleList.size() + " records were found.");
+            updateExportValue(articleList);
             articleList.sort(Article::compareTo);
-            fileService.saveLatestTimeStamp(articleList.get(articleList.size() - 1).getDate());
         }
         return articleList;
     }
 
+    public void updateExportValue(List<Article> articles){
+        log.info("Updating export values of selected Articles to true.");
+        List<UUID> ids = articles.stream()
+                .map(Article::getId)
+                .toList();
+        articleRepository.modifyExportValue(ids);
+    }
+
     public void save(Article article) {
         articleRepository.save(article);
+    }
+
+    public ArticleService(ArticleRepository articleRepository) {
+        this.articleRepository = articleRepository;
     }
 }

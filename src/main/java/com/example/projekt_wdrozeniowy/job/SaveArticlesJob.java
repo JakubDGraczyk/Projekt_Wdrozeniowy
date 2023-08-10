@@ -1,9 +1,9 @@
-package com.example.projekt_wdrozeniowy.controller;
+package com.example.projekt_wdrozeniowy.job;
 
 import com.example.projekt_wdrozeniowy.model.Article;
 import com.example.projekt_wdrozeniowy.service.ArticleService;
 import com.example.projekt_wdrozeniowy.service.CSVService;
-import org.springframework.beans.factory.annotation.Autowired;
+import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.scheduling.annotation.Async;
 import org.springframework.scheduling.annotation.Scheduled;
@@ -13,12 +13,11 @@ import java.util.List;
 
 
 @Controller
-public class ArticleController implements Runnable {
+@Slf4j
+public class SaveArticlesJob implements Runnable {
 
-    @Autowired
-    ArticleService articleService;
-    @Autowired
-    CSVService csvService;
+    private final ArticleService articleService;
+    private final CSVService csvService;
     @Value("${app.save-path}")
     String savePath;
 
@@ -27,9 +26,13 @@ public class ArticleController implements Runnable {
     //@Scheduled(fixedRate = 1000)
     @Async
     public void run() {
-        //TODO: what will happen when schedule is set to 1 ms or something? (possible problem with file access)
+        log.info("Starting job: " + this.getClass().getSimpleName());
         List<Article> articleList = articleService.findLatestArticles();
         csvService.saveToCSV(savePath, articleList);
     }
 
+    public SaveArticlesJob(ArticleService articleService, CSVService csvService) {
+        this.articleService = articleService;
+        this.csvService = csvService;
+    }
 }
