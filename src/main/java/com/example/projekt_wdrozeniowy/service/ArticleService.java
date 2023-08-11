@@ -19,13 +19,11 @@ public class ArticleService {
             log.info("No records were found, that suit this criteria.");
         } else {
             log.info(articleList.size() + " records were found.");
-            updateExportValue(articleList);
-            articleList.sort(Article::compareTo);
         }
         return articleList;
     }
 
-    public void updateExportValue(List<Article> articles){
+    public void updateExportValue(List<Article> articles) {
         log.info("Updating export values of selected Articles to true.");
         List<UUID> ids = articles.stream()
                 .map(Article::getId)
@@ -40,4 +38,5 @@ public class ArticleService {
     public ArticleService(ArticleRepository articleRepository) {
         this.articleRepository = articleRepository;
     }
+
 }

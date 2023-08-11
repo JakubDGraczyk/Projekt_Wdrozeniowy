@@ -9,13 +9,14 @@ import org.springframework.data.cassandra.core.mapping.PrimaryKey;
 import org.springframework.data.cassandra.core.mapping.Table;
 
 import java.time.LocalDateTime;
+import java.util.Objects;
 import java.util.UUID;
 
 @Table
 @Setter
 @Getter
 @ToString
-public class Article implements Comparable<Article> {
+public class Article{
     @Id
     @PrimaryKey
     private UUID id;
@@ -26,7 +27,7 @@ public class Article implements Comparable<Article> {
     private String author;
     private boolean exported;
 
-    Article() {
+    public Article() {
         this.id = UUID.randomUUID();
         this.date = LocalDateTime.now();
         this.date = this.date.withNano(0);
@@ -41,7 +42,17 @@ public class Article implements Comparable<Article> {
     }
 
     @Override
-    public int compareTo(Article o) {
-        return this.date.compareTo(o.getDate());
+    public boolean equals(Object o) {
+        if (this == o) return true;
+        if (o == null || getClass() != o.getClass()) return false;
+
+        Article article = (Article) o;
+
+        return Objects.equals(id, article.id);
+    }
+
+    @Override
+    public int hashCode() {
+        return id != null ? id.hashCode() : 0;
     }
 }

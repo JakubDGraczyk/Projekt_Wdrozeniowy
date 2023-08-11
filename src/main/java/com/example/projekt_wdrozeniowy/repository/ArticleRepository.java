@@ -14,4 +14,5 @@ public interface ArticleRepository extends CassandraRepository<Article, UUID> {
     List<Article> findArticlesToExport();
     @Query("UPDATE test.article SET exported = true WHERE id IN :article_ids")
     void modifyExportValue(@Param("article_ids")List<UUID> articleIds);
+
 }
