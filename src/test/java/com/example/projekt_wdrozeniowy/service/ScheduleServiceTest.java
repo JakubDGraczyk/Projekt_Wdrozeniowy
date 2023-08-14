@@ -33,7 +33,7 @@ class ScheduleServiceTest {
         List<Article> articles = this.init(0,3);
 
         //when
-         List<Article> result = scheduleService.getNextDataDump(articles);
+         List<Article> result = scheduleService.findNextDataToExport(articles);
 
          //then
         assertThat(result.size()).isEqualTo(1);
