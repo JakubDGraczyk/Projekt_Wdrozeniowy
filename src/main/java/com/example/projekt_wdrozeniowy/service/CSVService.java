@@ -8,6 +8,7 @@ import org.springframework.stereotype.Service;
 
 import java.io.FileWriter;
 import java.io.IOException;
+import java.time.LocalDate;
 import java.time.LocalDateTime;
 import java.time.format.DateTimeFormatter;
 import java.util.Arrays;
@@ -23,8 +24,8 @@ public class CSVService {
             log.info("There were no articles to save!");
             return false;
         }
-        DateTimeFormatter dateTimeFormatter = DateTimeFormatter.ofPattern("dd_MM_yyyy_HH_mm_ss");
-        String fileName = "Articles_" + LocalDateTime.now().format(dateTimeFormatter) + ".CSV";
+        DateTimeFormatter dateTimeFormatter = DateTimeFormatter.ofPattern("dd_MM_yyyy_HH");
+        String fileName = "Articles_" + articles.get(0).getDate().format(dateTimeFormatter) + ".CSV";
         String fullPath = filePath + fileName;
 
         try (CSVPrinter csvPrinter = new CSVPrinter(new FileWriter(fullPath), CSVFormat.DEFAULT)) {
@@ -38,5 +39,29 @@ public class CSVService {
         }
         return true;
     }
+
+    public boolean saveToCSV(String filePath, List<Article> articles, LocalDate localDate) {
+        if (articles.isEmpty()) {
+            log.info("There were no articles to save!");
+            return false;
+        }
+        DateTimeFormatter dateTimeFormatter = DateTimeFormatter.ofPattern("dd_MM_yyyy_HH");
+        LocalDateTime localDateTime = LocalDateTime.of(localDate, articles.get(0).getDate().toLocalTime());
+        String fileName = "Articles_" + localDateTime.format(dateTimeFormatter) + ".CSV";
+        String fullPath = filePath + fileName;
+
+        try (CSVPrinter csvPrinter = new CSVPrinter(new FileWriter(fullPath), CSVFormat.DEFAULT)) {
+            csvPrinter.printRecord("Id", "Date", "Title", "Text", "Author");
+            for (Article article : articles) {
+                csvPrinter.printRecord(article.getId(), article.getDate(), article.getTitle(), article.getContent(), article.getAuthor());
+            }
+            log.info(articles.size() + " articles were saved to " + fullPath + Arrays.toString(articles.toArray()));
+        } catch (IOException e) {
+            e.printStackTrace();
+        }
+        return true;
+    }
+
+
 }
 

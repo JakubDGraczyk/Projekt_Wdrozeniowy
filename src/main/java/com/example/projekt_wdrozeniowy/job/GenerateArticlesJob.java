@@ -17,7 +17,7 @@ public class GenerateArticlesJob implements Runnable {
     @Getter
     private int numberOfGeneratedArticles;
     @Override
-    @Scheduled(cron = "*/2 * * * * *")
+    @Scheduled(fixedRate = 60_000)
     @Async
     public void run() {
         log.info("Starting job: " + this.getClass().getSimpleName());
