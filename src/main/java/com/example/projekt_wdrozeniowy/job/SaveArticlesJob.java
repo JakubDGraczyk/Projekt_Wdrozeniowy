@@ -11,7 +11,6 @@ import org.springframework.scheduling.annotation.Scheduled;
 import org.springframework.stereotype.Controller;
 
 import java.util.List;
-import java.util.Optional;
 
 
 @Controller
@@ -24,30 +23,14 @@ public class SaveArticlesJob implements Runnable {
     private final String savePath;
 
     @Override
-    @Scheduled(cron = "0 0/55 * * * *")
+    @Scheduled(cron = "0 0/15 * * * *")
     @Async
     public void run() {
-        this.run(Optional.of(articleService.findLatestArticles()));
-    }
-
-    public void run(Optional<List<Article>> articleList) {
         log.info("Starting job: " + this.getClass().getSimpleName());
-        List<Article> startingList = articleList.orElseGet(articleService::findLatestArticles);
-        List<Article> jobList = scheduleService.findNextDataToExport(startingList);
+        List<Article> startingList = articleService.findLatestArticles();
+        List<Article> jobList = scheduleService.getNextBatch(startingList);
         csvService.saveToCSV(savePath, jobList);
         articleService.updateExportValue(jobList);
-        jobList = this.removeExportedRecords(startingList, jobList);
-        if (scheduleService.isThereMoreDataToExport(jobList)) {
-            log.info("Continuing job, there is still more data to export");
-            this.run(Optional.of(jobList));
-        }
-    }
-
-    private List<Article> removeExportedRecords(List<Article> main, List<Article> exportedRecords) {
-        for (Article exportedRecord : exportedRecords) {
-            main.remove(exportedRecord);
-        }
-        return main;
     }
 
     public SaveArticlesJob(ArticleService articleService, ScheduleService scheduleService, CSVService csvService, @Value("${app.save-path}") String path) {

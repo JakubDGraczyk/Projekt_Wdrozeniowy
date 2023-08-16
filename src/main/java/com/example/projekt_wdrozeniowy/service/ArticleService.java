@@ -5,7 +5,6 @@ import com.example.projekt_wdrozeniowy.repository.ArticleRepository;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Service;
 
-import java.util.Comparator;
 import java.util.List;
 import java.util.UUID;
 
@@ -25,7 +24,7 @@ public class ArticleService {
     }
 
     public void updateExportValue(List<Article> articles) {
-        log.info("Updating export values of selected Articles to true.");
+        log.info("Updating export values of given Articles to true.");
         List<UUID> ids = articles.stream()
                 .map(Article::getId)
                 .toList();

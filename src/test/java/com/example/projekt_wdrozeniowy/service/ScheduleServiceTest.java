@@ -1,60 +1,69 @@
 package com.example.projekt_wdrozeniowy.service;
 
-import com.example.projekt_wdrozeniowy.handler.ScheduleHandler;
 import com.example.projekt_wdrozeniowy.model.Article;
+import jdk.jfr.Description;
 import org.junit.jupiter.api.Test;
-import org.junit.jupiter.api.extension.ExtendWith;
-import org.mockito.InjectMocks;
-import org.mockito.Mock;
-import org.mockito.Mockito;
-import org.mockito.junit.jupiter.MockitoExtension;
 
 import java.time.LocalDate;
 import java.time.LocalDateTime;
 import java.time.LocalTime;
 import java.util.ArrayList;
-import java.util.Comparator;
 import java.util.List;
 
 import static org.assertj.core.api.Assertions.assertThat;
-import static org.junit.jupiter.api.Assertions.*;
-import static org.mockito.ArgumentMatchers.anyList;
-
 class ScheduleServiceTest {
 
-    ScheduleHandler scheduleHandler;
-    ScheduleService scheduleService;
+    private ScheduleService scheduleService;
 
     @Test
-    void getNextDataDump() {
+    @Description("Checks if records from yesterday that were posted after last scheduled hour, show the next day")
+    void shouldReturn3Records() {
         //given
-        scheduleHandler = new ScheduleHandler("13");
-        scheduleService = new ScheduleService(scheduleHandler);
-        List<Article> articles = this.init(0,3);
+        scheduleService = new ScheduleService("0,3,6,9,12,15,18,21");
+        List<Article> inputList = new ArrayList<>();
+        this.addSpecificArticles(inputList, LocalTime.of(23, 59), true, 1, 1);
+        this.addSpecificArticles(inputList, LocalTime.of(3, 0), false, 0, 2);
+        //when
+        List<Article> outputList = scheduleService.getNextBatch(inputList);
+
+        //then
+        assertThat(outputList.size()).isEqualTo(3);
+    }
+
+    @Test
+    @Description("Checks if 3 articles will be returned when scheduled export is made every 3h")
+    void shouldReturn3Recordsv2() {
+        //given
+        scheduleService = new ScheduleService("0,3,6,9,12,15,18,21");
+        List<Article> inputList = new ArrayList<>();
+        this.addSpecificArticles(inputList, LocalTime.of(23, 59), false, 1, 6);
 
         //when
-         List<Article> result = scheduleService.findNextDataToExport(articles);
+        List<Article> outputList = scheduleService.getNextBatch(inputList);
 
-         //then
-        assertThat(result.size()).isEqualTo(1);
-
+        //then
+        assertThat(outputList.size()).isEqualTo(3);
     }
-    private List<Article> init(int min, int max) {
-        List<Article> articles = new ArrayList<>();
-        for (int i = min; i <= max; i++) {
+
+    private void addSpecificArticles(List<Article> articles, LocalTime startHour, boolean dayOffset, int lower, int upper) {
+        for (int i = lower; i <= upper; i++) {
             Article article = new Article("Test", "Test", "Test");
             article.setDate(LocalDateTime.of(
                     LocalDate.now().getYear(),
                     LocalDate.now().getMonth(),
-                    LocalDate.now().minusDays(i).getDayOfMonth(),
-                    LocalTime.now().getHour(),
-                    LocalTime.now().getMinute(),
+                    dayOffset ? LocalDate.now().plusDays(i).getDayOfMonth() : LocalDate.now().getDayOfMonth(),
+                    startHour.plusHours(i).getHour(),
+                    startHour.getMinute(),
                     LocalTime.now().getSecond()
             ));
-            System.out.println(article);
             articles.add(article);
         }
-        articles.sort(Comparator.comparing(Article::getDate));
-        return articles;
+    }
+
+    private List<Article> removeUsedArticles(List<Article> main, List<Article> secondary) {
+        for (Article article : secondary) {
+            main.remove(article);
+        }
+        return main;
     }
 }

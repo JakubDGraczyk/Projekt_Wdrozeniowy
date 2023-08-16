@@ -8,11 +8,13 @@ import org.springframework.stereotype.Repository;
 
 import java.util.List;
 import java.util.UUID;
+
 @Repository
 public interface ArticleRepository extends CassandraRepository<Article, UUID> {
     @Query("SELECT * FROM test.article WHERE exported = false ALLOW FILTERING")
     List<Article> findArticlesToExport();
+
     @Query("UPDATE test.article SET exported = true WHERE id IN :article_ids")
-    void modifyExportValue(@Param("article_ids")List<UUID> articleIds);
+    void modifyExportValue(@Param("article_ids") List<UUID> articleIds);
 
 }

@@ -16,7 +16,7 @@ import java.util.UUID;
 @Setter
 @Getter
 @ToString
-public class Article{
+public class Article {
     @Id
     @PrimaryKey
     private UUID id;

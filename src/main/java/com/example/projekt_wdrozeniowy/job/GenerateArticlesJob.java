@@ -16,12 +16,13 @@ public class GenerateArticlesJob implements Runnable {
 
     @Getter
     private int numberOfGeneratedArticles;
+
     @Override
     @Scheduled(fixedRate = 60_000)
     @Async
     public void run() {
         log.info("Starting job: " + this.getClass().getSimpleName());
-        int counter = 1 + (int)(Math.random() * 3);
+        int counter = 1 + (int) (Math.random() * 3);
         numberOfGeneratedArticles = 0;
         for (int i = 0; i < counter; i++) {
             if (Math.random() * 100 > 50) {
