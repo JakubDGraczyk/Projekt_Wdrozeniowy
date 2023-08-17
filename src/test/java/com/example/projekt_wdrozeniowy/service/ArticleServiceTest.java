@@ -7,16 +7,13 @@ import org.mockito.InjectMocks;
 import org.mockito.Mock;
 import org.mockito.Mockito;
 import org.mockito.MockitoAnnotations;
-import org.springframework.test.context.junit.jupiter.SpringExtension;
 
 import java.util.ArrayList;
 import java.util.List;
 import java.util.UUID;
 
 import static org.assertj.core.api.AssertionsForClassTypes.assertThat;
-import static org.junit.jupiter.api.Assertions.*;
 import static org.mockito.ArgumentMatchers.any;
-import static org.mockito.ArgumentMatchers.anyList;
 
 class ArticleServiceTest {
 
@@ -26,14 +23,16 @@ class ArticleServiceTest {
     private ArticleService articleService;
     List<Article> articleList = new ArrayList<>();
     List<UUID> ids;
+
     @BeforeEach
     void setUp() {
         MockitoAnnotations.openMocks(this);
-        articleList.add(new Article("Test","Test","Test"));
-        articleList.add(new Article("Test","Test","Test"));
-        articleList.add(new Article("Test","Test","Test"));
+        articleList.add(new Article("Test", "Test", "Test"));
+        articleList.add(new Article("Test", "Test", "Test"));
+        articleList.add(new Article("Test", "Test", "Test"));
         ids = articleList.stream().map(Article::getId).toList();
     }
+
     @Test
     @DisplayName("findLatestArticles - should return article list")
     void shouldReturnArticleList() {
@@ -49,13 +48,15 @@ class ArticleServiceTest {
 
     @Test
     @DisplayName("findLatestArticles - should return empty list when no records were found in database")
-    void shouldReturnEmptyListWhenNoRecordsWereFound(){
+    void shouldReturnEmptyListWhenNoRecordsWereFound() {
         //given
 
         //when
         Mockito.when(articleRepository.findArticlesToExport()).thenReturn(new ArrayList<>());
+        List<Article> outputList = articleService.findLatestArticles();
+
         //then
-        assertThat(articleService.findLatestArticles().size()).isEqualTo(0);
+        assertThat(outputList.isEmpty()).isTrue();
         Mockito.verify(articleRepository, Mockito.times(1)).findArticlesToExport();
         Mockito.verify(articleRepository, Mockito.times(0)).modifyExportValue(ids);
     }
@@ -71,7 +72,7 @@ class ArticleServiceTest {
 
         // Then
         Mockito.verify(articleRepository, Mockito.times(1)).modifyExportValue(ids);
-        assertThat(articleService.findLatestArticles().size()).isEqualTo(0);
+        assertThat(articleService.findLatestArticles().isEmpty()).isTrue();
     }
 
     @Test

@@ -27,7 +27,7 @@ class ScheduleServiceTest {
         List<Article> outputList = scheduleService.getNextBatch(inputList);
 
         //then
-        assertThat(outputList.size()).isEqualTo(3);
+        assertThat(outputList).hasSize(3);
     }
 
     @Test
@@ -42,7 +42,7 @@ class ScheduleServiceTest {
         List<Article> outputList = scheduleService.getNextBatch(inputList);
 
         //then
-        assertThat(outputList.size()).isEqualTo(3);
+        assertThat(outputList).hasSize(3);
 
     }
     @Test
@@ -58,7 +58,7 @@ class ScheduleServiceTest {
         List<Article> outputList = scheduleService.getNextBatch(inputList);
 
         //then
-        assertThat(outputList.size()).isEqualTo(6);
+        assertThat(outputList).hasSize(6);
     }
     @Test
     @Description("Should return 1 article every hour, for two consecutive days.")
@@ -73,7 +73,7 @@ class ScheduleServiceTest {
             //when
             List<Article> outputList = scheduleService.getNextBatch(inputList);
             //then
-            assertThat(outputList.size()).isEqualTo(1);
+            assertThat(outputList).hasSize(1);
 
             //setup for repeat
             this.removeUsedArticles(inputList,outputList);
@@ -92,7 +92,7 @@ class ScheduleServiceTest {
             //when
             List<Article> outputList = scheduleService.getNextBatch(inputList);
             //then
-            assertThat(outputList.size()).isEqualTo(2);
+            assertThat(outputList).hasSize(2);
 
             //setup for repeat
             this.removeUsedArticles(inputList,outputList);

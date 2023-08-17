@@ -1,12 +1,10 @@
 package com.example.projekt_wdrozeniowy.service;
 
 import com.example.projekt_wdrozeniowy.model.Article;
-import lombok.Getter;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Component;
 
-import java.time.LocalDate;
 import java.time.LocalTime;
 import java.util.ArrayList;
 import java.util.Arrays;
@@ -17,7 +15,7 @@ import java.util.List;
 @Slf4j
 public class ScheduleService {
 
-    private String reportScheduleProperty;
+    private final String reportScheduleProperty;
     private final List<Integer> scheduledHours;
 
     private int pointer;
@@ -81,9 +79,8 @@ public class ScheduleService {
             }
             tempList.sort(Comparator.comparing(Integer::intValue));
         } else {
-            reportScheduleProperty = reportScheduleProperty.replaceAll(",", " ");
             tempList = Arrays.stream(reportScheduleProperty
-                            .split(" "))
+                            .split(","))
                     .map(Integer::parseInt)
                     .filter(o -> o >= 0)
                     .filter(o -> o <= 24)
