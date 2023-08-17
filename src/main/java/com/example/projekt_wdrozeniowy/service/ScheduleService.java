@@ -1,10 +1,12 @@
 package com.example.projekt_wdrozeniowy.service;
 
 import com.example.projekt_wdrozeniowy.model.Article;
+import lombok.Getter;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Component;
 
+import java.time.LocalDate;
 import java.time.LocalTime;
 import java.util.ArrayList;
 import java.util.Arrays;
@@ -36,10 +38,10 @@ public class ScheduleService {
         List<Article> subList = new ArrayList<>();
         subList.add(articles.get(0));
         for (int i = subList.size(); i < articles.size(); i++) {
-            if (pointer == 0 && articles.get(i).getDate().getHour() > getPrevPointer()) {
+            if (pointer == 0 && articles.get(i).getDate().getHour() > getPrevPointer()
+                    && articles.get(i).getDate().toLocalDate().isEqual(articles.get(0).getDate().toLocalDate())) {
                 subList.add(articles.get(i));
-            } else if (articles.get(i).getDate().getHour() < this.scheduledHours.get(pointer)
-                    && articles.get(0).getDate().toLocalDate().isEqual(articles.get(i).getDate().toLocalDate())) {
+            } else if (articles.get(i).getDate().getHour() < this.scheduledHours.get(pointer)) {
                 subList.add(articles.get(i));
             } else {
                 break;
