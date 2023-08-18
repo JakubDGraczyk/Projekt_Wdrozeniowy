@@ -29,7 +29,7 @@ public class CSVService {
         try (CSVPrinter csvPrinter = new CSVPrinter(new FileWriter(fullPath), CSVFormat.DEFAULT)) {
             csvPrinter.printRecord("Id", "Date", "Title", "Text", "Author");
             for (Article article : articles) {
-                csvPrinter.printRecord(article.getId(), article.getDate(), article.getTitle(), article.getContent(), article.getAuthor());
+                csvPrinter.printRecord(article.getId(), article.getDate(), article.getTitle(), article.getContents(), article.getAuthor());
             }
             log.info(articles.size() + " articles were saved to " + fullPath);
         } catch (IOException e) {

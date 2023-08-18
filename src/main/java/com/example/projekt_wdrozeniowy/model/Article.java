@@ -4,6 +4,7 @@ import lombok.Getter;
 import lombok.Setter;
 import lombok.ToString;
 import org.springframework.data.annotation.Id;
+import org.springframework.data.cassandra.core.mapping.Column;
 import org.springframework.data.cassandra.core.mapping.Indexed;
 import org.springframework.data.cassandra.core.mapping.PrimaryKey;
 import org.springframework.data.cassandra.core.mapping.Table;
@@ -21,9 +22,10 @@ public class Article {
     @PrimaryKey
     private UUID id;
     @Indexed
+    @Column("creation_date")
     private LocalDateTime date;
     private String title;
-    private String content;
+    private String contents;
     private String author;
     private boolean exported;
 
@@ -34,10 +36,10 @@ public class Article {
         this.exported = false;
     }
 
-    public Article(String title, String content, String author) {
+    public Article(String title, String contents, String author) {
         this();
         this.title = title;
-        this.content = content;
+        this.contents = contents;
         this.author = author;
     }
 
