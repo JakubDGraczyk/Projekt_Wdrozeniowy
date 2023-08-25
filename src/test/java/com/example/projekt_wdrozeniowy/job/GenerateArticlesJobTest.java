@@ -1,7 +1,6 @@
 package com.example.projekt_wdrozeniowy.job;
 import com.example.projekt_wdrozeniowy.model.Article;
 import com.example.projekt_wdrozeniowy.service.ArticleService;
-import lombok.With;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;

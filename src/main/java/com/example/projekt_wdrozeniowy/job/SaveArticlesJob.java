@@ -4,9 +4,9 @@ import com.example.projekt_wdrozeniowy.model.Article;
 import com.example.projekt_wdrozeniowy.service.ArticleService;
 import com.example.projekt_wdrozeniowy.service.CSVService;
 import com.example.projekt_wdrozeniowy.service.ScheduleService;
+import com.example.projekt_wdrozeniowy.util.AsyncJob;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Value;
-import org.springframework.scheduling.annotation.Async;
 import org.springframework.scheduling.annotation.Scheduled;
 import org.springframework.stereotype.Controller;
 
@@ -15,7 +15,7 @@ import java.util.List;
 
 @Controller
 @Slf4j
-public class SaveArticlesJob implements Runnable {
+public class SaveArticlesJob implements AsyncJob {
 
     private final ArticleService articleService;
     private final ScheduleService scheduleService;
@@ -24,7 +24,6 @@ public class SaveArticlesJob implements Runnable {
 
     @Override
     @Scheduled(cron = "0 0/15 * * * *")
-    @Async
     public void run() {
         log.info("Starting job: " + this.getClass().getSimpleName());
         List<Article> startingList = articleService.findLatestArticles();
@@ -33,7 +32,7 @@ public class SaveArticlesJob implements Runnable {
         articleService.updateExportValue(jobList);
     }
 
-    public SaveArticlesJob(ArticleService articleService, ScheduleService scheduleService, CSVService csvService, @Value("${app.save-path}") String path) {
+    public SaveArticlesJob( ArticleService articleService, ScheduleService scheduleService, CSVService csvService, @Value("${app.save-path}") String path) {
         this.articleService = articleService;
         this.scheduleService = scheduleService;
         this.csvService = csvService;

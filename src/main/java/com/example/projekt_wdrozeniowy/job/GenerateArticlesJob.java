@@ -2,16 +2,17 @@ package com.example.projekt_wdrozeniowy.job;
 
 import com.example.projekt_wdrozeniowy.model.Article;
 import com.example.projekt_wdrozeniowy.service.ArticleService;
+import com.example.projekt_wdrozeniowy.util.AsyncJob;
 import lombok.Getter;
 import lombok.extern.slf4j.Slf4j;
-import org.springframework.scheduling.annotation.Async;
+import org.springframework.scheduling.annotation.Scheduled;
 import org.springframework.stereotype.Controller;
 
 import java.util.Random;
 
 @Controller
 @Slf4j
-public class GenerateArticlesJob implements Runnable {
+public class GenerateArticlesJob implements AsyncJob {
 
     private final ArticleService articleService;
 
@@ -21,8 +22,7 @@ public class GenerateArticlesJob implements Runnable {
     private final Random random;
 
     @Override
-    //@Scheduled(fixedRate = 60_000)
-    @Async
+    @Scheduled(fixedRate = 60_000)
     public void run() {
         log.info("Starting job: " + this.getClass().getSimpleName());
         int counter = random.nextInt(3);
